@@ -1,61 +1,55 @@
-
 class TennisGame1
 
-  def initialize(player1Name, player2Name)
-    @player1 = Player.new(player1Name)
-    @player2 = Player.new(player2Name)
+  attr_reader :player1, :player2
+
+  def initialize(player1_name, player2_name)
+    @player1 = Player.new(player1_name)
+    @player2 = Player.new(player2_name)
   end
 
   def won_point(playerName)
-      return @player1.won_point if playerName == @player1.name
-      @player2.won_point
+      return player1.won_point if playerName == player1.name
+      player2.won_point
   end
 
   def is_tie?
-    @player1.points == @player2.points
+    player1.points == player2.points
   end
 
   def is_advantage?
-    @player1.points >= 4 or @player2.points >= 4
+    player1.points >= 4 or player2.points >= 4
   end
 
   def is_end_game?
-    is_advantage? && (@player1.points - @player2.points).abs >= 2
+    is_advantage? && (player1.points - player2.points).abs >= 2
   end
 
   def score
     if is_tie?
-      return @player1.text_score.concat("-All") if @player1.points < 3
+      return "#{player1.text_score}-All" if player1.points < 3
       "Deuce"
     elsif is_advantage?
-      player_ahead = [@player1, @player2].max { |a, b| a.points <=> b.points }
+      player_ahead = [player1, player2].max { |player_a, player_b| player_a.points <=> player_b.points }
       return "Win for #{player_ahead.name}" if is_end_game?
       "Advantage #{player_ahead.name}"
     else
-      @player1.text_score + "-" + @player2.text_score
+      "#{player1.text_score}-#{player2.text_score}"
     end
   end
 end
 
+
 class Player
-  attr_reader :name, :points
+  attr_reader :name, :points, :scores
 
   def initialize(name)
     @name = name
     @points = 0
+    @scores = ["Love", "Fifteen", "Thirty", "Forty"]
   end
 
   def text_score
-    case @points
-      when 0
-        "Love"
-      when 1
-        "Fifteen"
-      when 2
-        "Thirty"
-      when 3
-        "Forty"
-    end
+    scores[points]
   end
 
   def won_point
